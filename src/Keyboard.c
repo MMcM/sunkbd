@@ -413,6 +413,14 @@ static void FillKeyReport(USB_KeyboardReport_Data_t* KeyboardReport)
   n = 0;
   for (i = 0; i < NKeysDown; i++) {
     usage = pgm_read_byte(&KeyMap[KeysDown[i]]);
+    if ((KeyboardLayout & SUNKBD_LAYOUT_5_MASK) == 0) {
+      // Codes that are reused on Type 5.
+      switch (usage) {
+      case HID_KEYBOARD_SC_MUTE:
+        usage = HID_KEYBOARD_SC_KEYPAD_EQUAL_SIGN;
+        break;
+      }
+    }
     switch (usage) {
     case 0:
 #if DEBUG_UNMAPPED
