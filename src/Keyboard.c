@@ -307,6 +307,92 @@ static void SetClickerEnabled(bool enabled)
   ClickerEnabled = enabled;
 }
 
+#ifndef DEBUG_UNMAPPED
+#define DEBUG_UNMAPPED 0
+#endif
+
+#if DEBUG_UNMAPPED
+
+static HidUsageID encodeHighForDebug(uint8_t code) {
+  switch (code) {
+  case 0x00:
+    return HID_KEYBOARD_SC_G;
+  case 0x10:
+    return HID_KEYBOARD_SC_H;
+  case 0x20:
+    return HID_KEYBOARD_SC_I;
+  case 0x30:
+    return HID_KEYBOARD_SC_J;
+  case 0x40:
+    return HID_KEYBOARD_SC_K;
+  case 0x50:
+    return HID_KEYBOARD_SC_L;
+  case 0x60:
+    return HID_KEYBOARD_SC_M;
+  case 0x70:
+    return HID_KEYBOARD_SC_N;
+  case 0x80:
+    return HID_KEYBOARD_SC_O;
+  case 0x90:
+    return HID_KEYBOARD_SC_P;
+  case 0xA0:
+    return HID_KEYBOARD_SC_Q;
+  case 0xB0:
+    return HID_KEYBOARD_SC_R;
+  case 0xC0:
+    return HID_KEYBOARD_SC_S;
+  case 0xD0:
+    return HID_KEYBOARD_SC_T;
+  case 0xE0:
+    return HID_KEYBOARD_SC_U;
+  case 0xF0:
+    return HID_KEYBOARD_SC_V;
+  default:
+    return 0;
+  }
+}
+
+static HidUsageID encodeLowForDebug(uint8_t code) {
+  switch (code) {
+  case 0x00:
+    return HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS;
+  case 0x10:
+    return HID_KEYBOARD_SC_1_AND_EXCLAMATION;
+  case 0x02:
+    return HID_KEYBOARD_SC_2_AND_AT;
+  case 0x03:
+    return HID_KEYBOARD_SC_3_AND_HASHMARK;
+  case 0x04:
+    return HID_KEYBOARD_SC_4_AND_DOLLAR;
+  case 0x05:
+    return HID_KEYBOARD_SC_5_AND_PERCENTAGE;
+  case 0x06:
+    return HID_KEYBOARD_SC_6_AND_CARET;
+  case 0x07:
+    return HID_KEYBOARD_SC_7_AND_AMPERSAND;
+  case 0x08:
+    return HID_KEYBOARD_SC_8_AND_ASTERISK;
+  case 0x09:
+    return HID_KEYBOARD_SC_9_AND_OPENING_PARENTHESIS;
+  case 0x0A:
+    return HID_KEYBOARD_SC_A;
+  case 0x0B:
+    return HID_KEYBOARD_SC_B;
+  case 0x0C:
+    return HID_KEYBOARD_SC_C;
+  case 0x0D:
+    return HID_KEYBOARD_SC_D;
+  case 0x0E:
+    return HID_KEYBOARD_SC_E;
+  case 0x0F:
+    return HID_KEYBOARD_SC_F;
+  default:
+    return 0;
+  }
+}
+
+#endif
+
 static void FillKeyReport(USB_KeyboardReport_Data_t* KeyboardReport)
 {
   HidUsageID usage;
@@ -319,6 +405,13 @@ static void FillKeyReport(USB_KeyboardReport_Data_t* KeyboardReport)
     usage = pgm_read_byte(&KeyMap[KeysDown[i]]);
     switch (usage) {
     case 0:
+#if DEBUG_UNMAPPED
+      if (n+3 <= sizeof(KeyboardReport->KeyCode)) {
+        KeyboardReport->KeyCode[n++] = HID_KEYBOARD_SC_X;
+        KeyboardReport->KeyCode[n++] = encodeHighForDebug(KeysDown[i] & 0xF0);
+        KeyboardReport->KeyCode[n++] = encodeLowForDebug(KeysDown[i] & 0x0F);
+      }
+#endif
       break;
     case HID_KEYBOARD_SC_LEFT_CONTROL:
       shifts |= HID_KEYBOARD_MODIFIER_LEFTCTRL;
