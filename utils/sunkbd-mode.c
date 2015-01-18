@@ -140,58 +140,155 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  // http://docs.oracle.com/cd/E19253-01/817-2521/new-311/index.html#indexterm-82
+  // Changing Between Keyboards on SPARC Systems
+
   const char *layout;
-  switch (buf[1] & ~SUNKBD_LAYOUT_5_MASK) {
+  switch (buf[1]) {
   case 0x00:
-    layout = "United States";
+  case 0x01:
+    layout = "Type 4 / United States";
     break;
   case 0x02:
-    layout = "Belgium / French";
+    layout = "Type 4 / Belgium / French";
     break;
   case 0x03:
-    layout = "Canada / French";
+    layout = "Type 4 / Canada / French";
     break;
   case 0x04:
-    layout = "Denmark";
+    layout = "Type 4 / Denmark";
     break;
   case 0x05:
-    layout = "Germany";
+    layout = "Type 4 / Germany";
     break;
   case 0x06:
-    layout = "Italy";
+    layout = "Type 4 / Italy";
     break;
   case 0x07:
-    layout = "Netherlands";
+    layout = "Type 4 / Netherlands";
     break;
   case 0x08:
-    layout = "Norway";
+    layout = "Type 4 / Norway";
     break;
   case 0x09:
-    layout = "Portugal";
+    layout = "Type 4 / Portugal";
     break;
   case 0x0A:
-    layout = "America / Spanish";
+    layout = "Type 4 / America / Spanish";
     break;
   case 0x0B:
-    layout = "Sweden, Finland";
+    layout = "Type 4 / Sweden, Finland";
     break;
   case 0x0C:
-    layout = "Switzerland / French";
+    layout = "Type 4 / Switzerland / French";
     break;
   case 0x0D:
-    layout = "Switzerland / German";
+    layout = "Type 4 / Switzerland / German";
     break;
   case 0x0E:
-    layout = "United Kingdom";
+    layout = "Type 4 / Great Britain";
     break;
-  case 0x20:
-    layout = "Japan";
+  case 0x10:
+    layout = "Type 4 / Korea";
+    break;
+  case 0x11:
+    layout = "Type 4 / Taiwan";
+    break;
+  case 0x17:
+    layout = "Type 4 / Russia";
+    break;
+  case 0x21:
+    layout = "Type 5 / United States";
+    break;
+  case 0x22:
+    layout = "Type 5 / United States / UNIX";
+    break;
+  case 0x23:
+    layout = "Type 5 / France";
+    break;
+  case 0x24:
+    layout = "Type 5 / Denmark";
+    break;
+  case 0x25:
+    layout = "Type 5 / Germany";
+    break;
+  case 0x26:
+    layout = "Type 5 / Italy";
+    break;
+  case 0x27:
+    layout = "Type 5 / Netherlands";
+    break;
+  case 0x28:
+    layout = "Type 5 / Norway";
+    break;
+  case 0x29:
+    layout = "Type 5 / Portugal";
+    break;
+  case 0x2A:
+    layout = "Type 5 / Spain";
+    break;
+  case 0x2B:
+    layout = "Type 5 / Sweden";
+    break;
+  case 0x2C:
+    layout = "Type 5 / Switzerland / French";
+    break;
+  case 0x2D:
+    layout = "Type 5 / Switzerland / German";
+    break;
+  case 0x2E:
+    layout = "Type 5 / Great Britain";
+    break;
+  case 0x2F:
+    layout = "Type 5 / Korea";
+    break;
+  case 0x30:
+    layout = "Type 5 / Taiwan";
+    break;
+  case 0x31:
+    layout = "Type 5 / Japan";
+    break;
+  case 0x32:
+    layout = "Type 5 / Canada / French";
+    break;
+  case 0x33:
+    layout = "Type 5 / Hungary";
+    break;
+  case 0x34:
+    layout = "Type 5 / Poland";
+    break;
+  case 0x35:
+    layout = "Type 5 / Czech";
+    break;
+  case 0x36:
+    layout = "Type 5 / Russia";
+    break;
+  case 0x37:
+    layout = "Type 5 / Latvia";
+    break;
+  case 0x38:
+    layout = "Type 5 / Turkey";
+    break;
+  case 0x39:
+    layout = "Type 5 / Greece";
+    break;
+  case 0x3A:
+    layout = "Type 5 / Arabic";
+    break;
+  case 0x3B:
+    layout = "Type 5 / Lithuania";
+    break;
+  case 0x3C:
+    layout = "Type 5 / Belgium";
+    break;
+  case 0x3E:
+    layout = "Type 5 / Canada / French";
     break;
   default:
     layout = "Unknown";
     break;
   }
-  printf("Layout = %02X (%s%s)\n", buf[1], (buf[1] & SUNKBD_LAYOUT_5_MASK) ? "Type 5 " : "", layout);
+  printf("Layout = %02X (%s)\n", buf[1], layout);
 
   do {
     if (click != -1) {

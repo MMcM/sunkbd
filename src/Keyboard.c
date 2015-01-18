@@ -57,7 +57,7 @@ typedef uint8_t HidUsageID;
 
 static HidUsageID KeysDown[16];
 static uint8_t NKeysDown;
-static uint8_t KeyboardLayout;
+static uint8_t KeyboardLayout, LayoutDelay;
 static bool ExpectReset, ExpectLayout;
 static bool ClickerEnabled;
 
@@ -234,9 +234,9 @@ static void SunKbd_Init(void)
 
   NKeysDown = 0;
 
-  KeyboardLayout = -1;
+  KeyboardLayout = 0xFF;
+  LayoutDelay = 100;
   ExpectReset = ExpectLayout = false;
-  Serial_SendByte(SUNKBD_CMD_LAYOUT); // Request layout.
 
   ClickerEnabled = false;
 }
@@ -444,6 +444,14 @@ void EVENT_USB_Device_ControlRequest(void)
 void EVENT_USB_Device_StartOfFrame(void)
 {
   HID_Device_MillisecondElapsed(&Keyboard_HID_Interface);
+
+  if ((KeyboardLayout == 0xFF) &&
+      (LayoutDelay > 0)) {
+    LayoutDelay--;
+    if (LayoutDelay == 0) {
+      Serial_SendByte(SUNKBD_CMD_LAYOUT); // Request layout.
+    }
+  }
 }
 
 /** HID class driver callback function for the creation of HID reports to the host.
