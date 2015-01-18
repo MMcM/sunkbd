@@ -55,6 +55,8 @@ USB_ClassInfo_HID_Device_t Keyboard_HID_Interface =
 
 typedef uint8_t HidUsageID;
 
+static uint8_t EE_ClickerEnabled EEMEM = 0;
+
 static HidUsageID KeysDown[16];
 static uint8_t NKeysDown;
 static uint8_t KeyboardLayout, LayoutDelay;
@@ -230,6 +232,8 @@ static HidUsageID KeyMap[128] PROGMEM = {
 
 static void SunKbd_Init(void)
 {
+  uint8_t ee;
+
   Serial_Init(1200, false);
 
   NKeysDown = 0;
@@ -238,7 +242,12 @@ static void SunKbd_Init(void)
   LayoutDelay = 100;
   ExpectReset = ExpectLayout = false;
 
-  ClickerEnabled = false;
+  ee = eeprom_read_byte(&EE_ClickerEnabled);
+  if (ee == 0xFF) {
+    ee = 0;
+    eeprom_write_byte(&EE_ClickerEnabled, ee);
+  }
+  ClickerEnabled = (bool)ee;
 }
 
 static void SunKbd_Task(void)
@@ -305,6 +314,7 @@ static void SetClickerEnabled(bool enabled)
 {
   Serial_SendByte(enabled ? SUNKBD_CMD_CLICK : SUNKBD_CMD_NOCLICK);
   ClickerEnabled = enabled;
+  eeprom_write_byte(&EE_ClickerEnabled, (uint8_t)enabled);
 }
 
 #ifndef DEBUG_UNMAPPED
@@ -543,6 +553,9 @@ void EVENT_USB_Device_StartOfFrame(void)
     LayoutDelay--;
     if (LayoutDelay == 0) {
       Serial_SendByte(SUNKBD_CMD_LAYOUT); // Request layout.
+      if (ClickerEnabled) {
+        Serial_SendByte(SUNKBD_CMD_CLICK);
+      }
     }
   }
 }
