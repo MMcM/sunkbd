@@ -97,7 +97,7 @@ static bool ClickerEnabled;
 
 // Matches Linux kernel driver by correlating sunkbd_keycode and hid_keyboard.
 
-static HidUsageID KeyMap[128] PROGMEM = {
+static HidUsageID const KeyMap[128] PROGMEM = {
   0,                            // 0x00
   HID_KEYBOARD_SC_STOP,
   HID_KEYBOARD_SC_VOLUME_DOWN,
